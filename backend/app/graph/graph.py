@@ -17,6 +17,16 @@ _model = ChatAnthropic(
     # the default (omitted) is fine for this use case.
     timeout=None,
     stop=None,
+    # Sonnet 5 defaults to "high" effort (adaptive thinking) if unset, which
+    # spends real output tokens on thinking even for simple lookups like
+    # "what can I make with eggs and bread." "medium" is a real cost cut on
+    # every request - directly relevant to Priya's per-query cost concern -
+    # without dropping to "low", which risks under-thinking harder requests
+    # and would cut against the quality-over-speed call already made (see
+    # SCOPING.md "Contradictions resolved"). This is a global tier, not the
+    # true per-query cost routing Priya asked for - see SCOPING.md "Scope
+    # cut" for why that's out of scope here.
+    effort="medium",
 )
 _model_with_tools = _model.bind_tools(TOOLS)
 

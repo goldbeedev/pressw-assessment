@@ -25,6 +25,7 @@ build out some kind of doc that the bot always pulls from for must haves like no
 - grocery list, its related but almost a new app itself
 - not parsing family cookbooks - low signal, one off user mention and adds complexity.
 - not persisting memory past current session window - over fears of the allergy/health legal factors, but context remains within that chat session.
+- true per-query cost routing (cheap model for simple asks, smarter model for hard ones) - priya's literal ask. building a query-complexity classifier to route between models is a real v2 lift. instead: set a single global effort="medium" on sonnet 5 (default is "high", which was quietly spending real output tokens on adaptive thinking even for something like "substitute for buttermilk"). that's a real, measured cost cut on every request, just not the per-query granularity priya described. didn't drop to effort="low" - that risks under-thinking harder requests and would undercut the quality-over-speed call already made above.
 
 - **Contradictions resolved:** where stakeholders disagreed, and how you decided
 timing (2 seconds vs quality and possibly slower than 2 seconds - model choice? cost of that model?) quality over speed - you need to sell them on the v1 before optimizing for performance, poor quality cant out value slightly slower response time. also CEO > PM decisions, also PM are not always technical.
