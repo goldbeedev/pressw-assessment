@@ -1,0 +1,47 @@
+- **Scope committed:** what you're actually building, as a tight list
+tech:
+
+Python backend 
+React Frontend - vite, radix ui, typescript
+Langchain - llm calls
+docker
+external tool - websearch travily (free api key, better quality)
+Sonnet 5 model, balance between cost and quality
+
+product:
+
+answer short cooking questions
+something about cooking utensils and tools, but its ambiguous with no real concrete asks - come up with general solution - real user interviews have mentioned they all have different things, needs to accomodate this.
+suggest recipes - use ingredients the user has
+opinionated "friendly" response (needs to feel like a relationship not a tool)
+one person says under 2 seconds response, other says quality outweighs timing
+memory - dont recommend shellfish if they said they were allergic to it last week
+health stuff. People on keto, people managing diabetes, vegetarians, people with real allergies. Our product needs to handle that space well
+people want to save recipes list
+build out some kind of doc that the bot always pulls from for must haves like not mentioning health related guidelines/suggestions?
+
+- **Scope cut:** what you heard but decided not to do, with reasoning
+- possibly not do voice here, for a POC that is a whole new can of worms.
+- grocery list, its related but almost a new app itself
+- not parsing family cookbooks - low signal, one off user mention and adds complexity.
+- not persisting memory past current session window - over fears of the allergy/health legal factors, but context remains within that chat session.
+
+- **Contradictions resolved:** where stakeholders disagreed, and how you decided
+timing (2 seconds vs quality and possibly slower than 2 seconds - model choice? cost of that model?) quality over speed - you need to sell them on the v1 before optimizing for performance, poor quality cant out value slightly slower response time. also CEO > PM decisions, also PM are not always technical.
+no keto, dietary etc - I agree with diane we should not become a medical advice platform but acknowledge the users general concern
+dont store health related info
+memory architecture - marcus wants cross-session memory (the shellfish-next-week example), but that's exactly the health-adjacent data diane says not to persist in v1. resolved by keeping memory session-only: LangGraph's in-memory checkpointer remembers earlier turns within one conversation, nothing persists across sessions or restarts. no database for v1 - and not postgres either, since the one thing worth persisting long-term (allergies) is the one thing counsel told us to hold off on. if v2 needs durable memory for non-health preferences (favorite cuisine, saved recipes), that's a small postgres table keyed by user id, not embeddings.
+
+- **Clarifying questions:** what you'd want answered before a production build
+chefs toolkit questions
+
+- **Assumptions made:** what you decided without asking
+no voice
+understand the users utensils over a pre-set deterministic group.
+memory
+needs guard rails against safe to eat, and health queries.
+streaming token chat response.
+
+- **Risks accepted:** what could bite later and why you're accepting it
+no voice
+sonnet 5 could add up but is the right balance between cost and quality

@@ -1,0 +1,50 @@
+from langchain_anthropic import ChatAnthropic
+from langchain_core.messages import SystemMessage
+from langgraph.checkpoint.memory import MemorySaver
+from langgraph.graph import MessagesState, StateGraph
+from langgraph.graph.state import CompiledStateGraph
+from langgraph.prebuilt import ToolNode, tools_condition
+
+from app.config import settings
+from app.graph.prompts import SYSTEM_PROMPT
+from app.graph.tools import TOOLS
+
+_model = ChatAnthropic(
+    model_name=settings.anthropic_model,
+    max_tokens=1024,
+    # No temperature/top_p/top_k: Sonnet 5 400s on a non-default value, and
+    # the default (omitted) is fine for this use case.
+    timeout=None,
+    stop=None,
+)
+_model_with_tools = _model.bind_tools(TOOLS)
+
+
+def _agent_node(state: MessagesState) -> dict:
+    """The only node that talks to the LLM. It decides on its own, per turn,
+    whether to answer directly or call a tool - there is no hardcoded
+    sequence of tool calls anywhere in this graph."""
+    messages = [SystemMessage(content=SYSTEM_PROMPT), *state["messages"]]
+    response = _model_with_tools.invoke(messages)
+    return {"messages": [response]}
+
+
+def build_graph() -> CompiledStateGraph:
+    graph = StateGraph(MessagesState)
+    graph.add_node("agent", _agent_node)
+    graph.add_node("tools", ToolNode(TOOLS))
+
+    graph.set_entry_point("agent")
+    # tools_condition inspects the last message: routes to "tools" if the
+    # model asked for one, otherwise ends the turn. The model - not this code
+    # - decides which branch gets taken on every single turn.
+    graph.add_conditional_edges("agent", tools_condition)
+    graph.add_edge("tools", "agent")
+
+    # MemorySaver = session-scoped, in-process conversation memory only. See
+    # SCOPING.md "Contradictions resolved" for why this doesn't persist to a
+    # database.
+    return graph.compile(checkpointer=MemorySaver())
+
+
+GRAPH = build_graph()
