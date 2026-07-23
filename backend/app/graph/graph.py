@@ -1,5 +1,6 @@
 from langchain_anthropic import ChatAnthropic
 from langchain_core.messages import SystemMessage
+from langchain_core.runnables import RunnableConfig
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import MessagesState, StateGraph
 from langgraph.graph.state import CompiledStateGraph
@@ -20,12 +21,19 @@ _model = ChatAnthropic(
 _model_with_tools = _model.bind_tools(TOOLS)
 
 
-def _agent_node(state: MessagesState) -> dict:
+def _agent_node(state: MessagesState, config: RunnableConfig) -> dict:
     """The only node that talks to the LLM. It decides on its own, per turn,
     whether to answer directly or call a tool - there is no hardcoded
-    sequence of tool calls anywhere in this graph."""
+    sequence of tool calls anywhere in this graph.
+
+    `config` must be forwarded to `.invoke()` - it carries the callback
+    manager LangGraph uses to detect that token-by-token streaming was
+    requested (`stream_mode="messages"`). Drop it and this call silently
+    falls back to one non-streamed response instead of raising anything,
+    which is exactly what happened here before this fix.
+    """
     messages = [SystemMessage(content=SYSTEM_PROMPT), *state["messages"]]
-    response = _model_with_tools.invoke(messages)
+    response = _model_with_tools.invoke(messages, config)
     return {"messages": [response]}
 
 

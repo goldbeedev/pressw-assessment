@@ -1,4 +1,14 @@
+from dotenv import load_dotenv
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+# pydantic-settings parses `.env` into the Settings object below, but it does
+# NOT copy those values into os.environ. TavilySearch and ChatAnthropic read
+# TAVILY_API_KEY / ANTHROPIC_API_KEY straight from os.environ, independently
+# of this file - without this, running locally (no Docker, no shell that's
+# sourced the .env) crashes on import with "Did not find tavily_api_key".
+# No-ops if there's no .env file to find (e.g. in Docker, where the real
+# process env is already set via docker-compose).
+load_dotenv()
 
 
 class Settings(BaseSettings):
