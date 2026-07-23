@@ -37,9 +37,13 @@ export function SessionFooter({ sessionId }: { sessionId: string | null }) {
 
   if (!sessionId) return null;
 
+  // TS narrowing on the destructured prop doesn't carry into this closure -
+  // rebind to a const so handleCopy sees a definite string, not string | null.
+  const id = sessionId;
+
   async function handleCopy() {
     try {
-      await navigator.clipboard.writeText(sessionId);
+      await navigator.clipboard.writeText(id);
       setCopied(true);
       setTimeout(() => setCopied(false), 1500);
     } catch {
@@ -50,7 +54,7 @@ export function SessionFooter({ sessionId }: { sessionId: string | null }) {
 
   return (
     <Bar>
-      <span>Conversation ID: {sessionId.slice(0, 8)}&hellip;</span>
+      <span>Conversation ID: {id.slice(0, 8)}&hellip;</span>
       <CopyButton type="button" onClick={handleCopy}>
         {copied ? "Copied!" : "Copy full ID"}
       </CopyButton>

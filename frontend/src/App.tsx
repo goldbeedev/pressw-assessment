@@ -4,6 +4,7 @@ import { GlobalStyle, theme } from "./GlobalStyle";
 import { ChatWindow } from "./components/ChatWindow";
 import { ChatInput } from "./components/ChatInput";
 import { SessionFooter } from "./components/SessionFooter";
+import { SuggestionChips } from "./components/SuggestionChips";
 import { streamMessage } from "./api";
 import type { ChatMessage } from "./types";
 
@@ -63,6 +64,7 @@ export default function App() {
   );
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [inputValue, setInputValue] = useState("");
 
   function appendToMessage(id: string, text: string) {
     setMessages((prev) =>
@@ -112,7 +114,15 @@ export default function App() {
         </Header>
         <ChatWindow messages={messages} isLoading={isLoading} />
         {error && <ErrorBanner>{error}</ErrorBanner>}
-        <ChatInput onSend={handleSend} disabled={isLoading} />
+        {messages.length === 1 && (
+          <SuggestionChips onPick={(text) => setInputValue(text)} />
+        )}
+        <ChatInput
+          value={inputValue}
+          onChange={setInputValue}
+          onSend={handleSend}
+          disabled={isLoading}
+        />
         <SessionFooter sessionId={sessionId} />
       </Shell>
     </>

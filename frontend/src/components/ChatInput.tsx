@@ -1,4 +1,3 @@
-import { useState } from "react";
 import type { FormEvent } from "react";
 import styled from "styled-components";
 import { theme } from "../GlobalStyle";
@@ -47,27 +46,29 @@ const SendButton = styled.button`
 `;
 
 export function ChatInput({
+  value,
+  onChange,
   onSend,
   disabled,
 }: {
+  value: string;
+  onChange: (value: string) => void;
   onSend: (text: string) => void;
   disabled: boolean;
 }) {
-  const [value, setValue] = useState("");
-
   function handleSubmit(event: FormEvent) {
     event.preventDefault();
     const trimmed = value.trim();
     if (!trimmed || disabled) return;
     onSend(trimmed);
-    setValue("");
+    onChange("");
   }
 
   return (
     <Form onSubmit={handleSubmit}>
       <Input
         value={value}
-        onChange={(e) => setValue(e.target.value)}
+        onChange={(e) => onChange(e.target.value)}
         placeholder="What do you feel like cooking?"
         disabled={disabled}
       />
