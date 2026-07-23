@@ -19,7 +19,7 @@ const StyledAvatar = styled(Avatar.Root)<{ $isUser: boolean }>`
   height: 2rem;
   min-width: 2rem;
   border-radius: 999px;
-  font-size: 0.85rem;
+  font-size: ${(p) => (p.$isUser ? "0.85rem" : "1.1rem")};
   font-weight: 600;
   color: ${theme.userBubbleText};
   background: ${(p) => (p.$isUser ? theme.textMuted : theme.accent)};
@@ -44,7 +44,7 @@ export function MessageBubble({ message }: { message: ChatMessage }) {
   return (
     <Row $isUser={isUser}>
       <StyledAvatar $isUser={isUser}>
-        <Avatar.Fallback>{isUser ? "You" : "PP"}</Avatar.Fallback>
+        <Avatar.Fallback>{isUser ? "You" : "🧑‍🍳"}</Avatar.Fallback>
       </StyledAvatar>
       <Bubble $isUser={isUser}>{message.content}</Bubble>
     </Row>
