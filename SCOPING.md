@@ -35,11 +35,15 @@ memory architecture - marcus wants cross-session memory (the shellfish-next-week
 
 - **Clarifying questions:** what you'd want answered before a production build
 chefs toolkit questions
+target market/audience (for design clarifications and other built in features)
+how the app will be monetized
+scale - how many users **could** realistically hit this at once?
+v2 thoughts - could change the direction of some v1 prod things
 
 - **Assumptions made:** what you decided without asking
 no voice
 understand the users utensils over a pre-set deterministic group.
-memory
+session memory
 needs guard rails against safe to eat, and health queries.
 streaming token chat response.
 

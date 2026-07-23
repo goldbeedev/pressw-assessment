@@ -42,6 +42,8 @@ tavily web_search   save_recipe / list_saved_recipes (in-memory stub)
 
 ### Option A: Docker (recommended)
 
+From project root:
+
 ```bash
 cp .env.example .env
 # fill in ANTHROPIC_API_KEY and TAVILY_API_KEY in .env
