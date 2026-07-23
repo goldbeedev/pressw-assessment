@@ -45,3 +45,6 @@ streaming token chat response.
 - **Risks accepted:** what could bite later and why you're accepting it
 no voice
 sonnet 5 could add up but is the right balance between cost and quality
+saved recipes (save_recipe/list_saved_recipes) are one shared in-process list with no per-session or per-user key at all - unlike conversation memory, which is correctly scoped by session id. two people saving recipes at the same time would see each other's list. acceptable for a single-reviewer demo, not for anyone else touching it.
+the legal guardrails (no medical/dietary advice, no food-safety judgment calls) are enforced entirely by the system prompt, no classifier or code-level check behind them - only the allergen disclaimer is code-appended. diane called these non-negotiable; a determined user could plausibly talk the model past a prompt-only guardrail.
+no auth or rate limiting on the api - directly relevant given priya's per-query cost concern. CORS restricts which browser origins can call it, but that's not a security boundary; a direct curl bypasses it entirely.
