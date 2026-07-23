@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { GlobalStyle, theme } from "./GlobalStyle";
 import { ChatWindow } from "./components/ChatWindow";
 import { ChatInput } from "./components/ChatInput";
+import { SessionFooter } from "./components/SessionFooter";
 import { streamMessage } from "./api";
 import type { ChatMessage } from "./types";
 
@@ -112,6 +113,7 @@ export default function App() {
         <ChatWindow messages={messages} isLoading={isLoading} />
         {error && <ErrorBanner>{error}</ErrorBanner>}
         <ChatInput onSend={handleSend} disabled={isLoading} />
+        <SessionFooter sessionId={sessionId} />
       </Shell>
     </>
   );
